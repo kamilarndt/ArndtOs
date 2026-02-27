@@ -1,0 +1,6 @@
+{
+  "signal_id": "f0dfd6d5-14d4-428c-8cab-4026b208df0c",
+  "success": false,
+  "message": "Reviewer: Test failed (exit 1). Log: FAIL: test_logic.py:10 - expected 5, got 4",
+  "processed_at": "2026-02-27T07:23:47.241440300Z"
+}

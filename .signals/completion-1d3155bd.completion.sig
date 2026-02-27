@@ -1,0 +1,1 @@
+{"signal_type": "completion", "id": "completion-1d3155bd", "payload": {"model": "default", "timestamp": 24290.2434859, "message_count": 1}, "created_at": "2026-02-27T15:34:49.115385+00:00Z", "source": "antigravity-router"}

@@ -1,0 +1,19 @@
+﻿{
+    "paths":  {
+                  "antigravity":  "D:\\_WorkSpaces\\antigravity-system",
+                  "signals":  "D:\\_WorkSpaces\\ArndtOs\\.signals",
+                  "workspace":  "D:\\_WorkSpaces\\ArndtOs"
+              },
+    "ports":  {
+                  "daemon":  18765,
+                  "memory":  3002,
+                  "router":  18767
+              },
+    "lastRun":  "2026-02-27T16:47:23.0890174+01:00",
+    "services":  {
+                     "Memory":  {
+                                    "Type":  "docker",
+                                    "Port":  3002
+                                }
+                 }
+}
