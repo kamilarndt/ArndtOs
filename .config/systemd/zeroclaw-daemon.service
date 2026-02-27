@@ -1,0 +1,15 @@
+[Unit]
+Description=ZeroClaw Daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/zeroclaw-daemon
+Restart=always
+RestartSec=5
+WatchdogSec=30
+Environment=JWT_SECRET=%d/jwt_secret
+EnvironmentFile=-/etc/zeroclaw/daemon.env
+
+[Install]
+WantedBy=multi-user.target

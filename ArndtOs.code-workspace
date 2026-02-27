@@ -7,5 +7,7 @@
 			"path": "../AntiGravity-System"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"powershell.cwd": "ArndtOs"
+	}
 }

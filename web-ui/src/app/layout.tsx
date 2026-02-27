@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { WebSocketProvider } from '@/components/WebSocketProvider'
 
 export const metadata: Metadata = {
   title: 'ZeroClaw OS',
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <WebSocketProvider>
+          {children}
+        </WebSocketProvider>
+      </body>
     </html>
   )
 }

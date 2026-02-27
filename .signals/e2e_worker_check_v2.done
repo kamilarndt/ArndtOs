@@ -1,0 +1,6 @@
+{
+  "signal_id": "e2e_worker_check_v2",
+  "success": false,
+  "message": "Błąd podczas tworzenia kontenera Worker'a",
+  "processed_at": "2026-02-27T21:37:13.559664500Z"
+}

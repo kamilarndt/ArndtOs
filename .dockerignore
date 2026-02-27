@@ -1,0 +1,8 @@
+# .dockerignore
+node_modules/
+target/
+.git/
+*.md
+.sisyphus/
+.workspaces/
+.sandbox/

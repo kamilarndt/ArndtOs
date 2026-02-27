@@ -1,0 +1,13 @@
+[Unit]
+Description=ZeroClaw Memory MCP
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node /opt/zeroclaw/memory/dist/index.js
+Restart=always
+RestartSec=5
+EnvironmentFile=-/etc/zeroclaw/memory.env
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,0 @@
-{
-  "signal_id": "6bcbc942-3cc9-41c1-bb06-5bf34003031e",
-  "success": false,
-  "message": "Budget exceeded: 10 iterations > limit 5",
-  "processed_at": "2026-02-27T12:40:21.230304300Z"
-}

@@ -1,0 +1,6 @@
+{
+  "signal_id": "health_check_01",
+  "success": true,
+  "message": "pong",
+  "processed_at": "2026-02-27T21:17:45.161007400Z"
+}
