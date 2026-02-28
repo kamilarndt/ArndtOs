@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  zeroclaw-runtime:
+    image: ghcr.io/zeroclaw-labs/zeroclaw:v0.1.7
+    container_name: zeroclaw-runtime
+    restart: unless-stopped
+    ports:
+      - "42617:42617"
+    env_file:
+      - .env
+    environment:
+      - ZEROCLAW_CONFIG_PATH=/workspace/config.toml
+      - ZEROCLAW_WORKSPACE=/workspace
+      - PROVIDER_API_KEY=${PROVIDER_API_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OPENAI_API_KEY=${PROVIDER_API_KEY}
+      - ZAI_API_KEY=${PROVIDER_API_KEY}
+      - API_KEY=${PROVIDER_API_KEY}
+    volumes:
+      # Mapujemy cały folder ArndtOs do /workspace wewnątrz kontenera
+      - .:/workspace
