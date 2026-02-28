@@ -6,11 +6,11 @@
 # ============================================================
 $AntigravityPath = "D:\_WorkSpaces\antigravity-system"
 
-# Porty w zakresie 18000-18999 (rzadko uzywane)
-$DaemonPort = 18765
-$MemoryPort = 18766
-$RouterPort = 18767
-$DockerProxyPort = 18768
+# Standardowe porty uslug AntiGravity
+$DaemonPort = 8080
+$MemoryPort = 3000
+$RouterPort = 8000
+$DockerProxyPort = 2375
 
 # Nazwy procesow do wykrywania
 $ProcessNames = @{
@@ -37,7 +37,8 @@ function Test-Port {
         $wait = $connect.AsyncWaitHandle.WaitOne(1500)
         $tcp.Close()
         return $wait
-    } catch {
+    }
+    catch {
         return $false
     }
 }
@@ -64,7 +65,7 @@ function Find-ProcessOnPort {
                     $proc = Get-Process -Id $pid -ErrorAction SilentlyContinue
                     if ($proc) {
                         return @{
-                            PID = $pid
+                            PID  = $pid
                             Name = $proc.ProcessName
                             Path = $proc.Path
                         }
@@ -72,7 +73,8 @@ function Find-ProcessOnPort {
                 }
             }
         }
-    } catch {}
+    }
+    catch {}
     return $null
 }
 
@@ -90,7 +92,8 @@ function Find-PortByProcess {
                 }
             }
         }
-    } catch {}
+    }
+    catch {}
     return $null
 }
 
@@ -234,11 +237,13 @@ $signalsLink = Join-Path $PSScriptRoot ".signals"
 
 if (Test-Path $signalsLink) {
     Write-Info ".signals/ juz istnieje"
-} else {
+}
+else {
     try {
         $null = New-Item -ItemType Junction -Path $signalsLink -Target $signalsTarget -Force -ErrorAction Stop
         Write-Success ".signals/ junction utworzony"
-    } catch {
+    }
+    catch {
         Copy-Item $signalsTarget $signalsLink -Recurse -Force
         Write-Warn ".signals/ skopiowany (junction niedostepny)"
     }
@@ -287,7 +292,8 @@ cd $AntigravityPath\router && python main.py --doctor
 "@
     Set-Content $agentsFile $agentsContent -Encoding UTF8
     Write-Success "AGENTS.md utworzony"
-} else {
+}
+else {
     Write-Info "AGENTS.md juz istnieje"
 }
 
@@ -313,7 +319,8 @@ ROUTER_PORT=$RouterPort
 "@
     Set-Content $envFile $envContent -Encoding UTF8
     Write-Success ".env utworzony"
-} else {
+}
+else {
     Write-Info ".env juz istnieje"
 }
 
@@ -340,11 +347,13 @@ try {
         $agImages = docker images --format "{{.Repository}}" 2>$null | Where-Object { $_ -like "ag-*" }
         if ($agImages) {
             Write-Info "AG images: $($agImages -join ', ')"
-        } else {
+        }
+        else {
             Write-Warn "Brak AG images. Uruchom: $AntigravityPath\docker\build_images.ps1"
         }
     }
-} catch {
+}
+catch {
     Write-Warn "Docker niedostepny"
 }
 
@@ -356,9 +365,11 @@ if ($runningServices['Daemon']) {
     $dInfo = $runningServices['Daemon']
     Write-Info "Daemon juz dziala na porcie $($dInfo.Port) ($($dInfo.Type))"
     $DaemonPort = $dInfo.Port
-} elseif (Test-Port $DaemonPort) {
+}
+elseif (Test-Port $DaemonPort) {
     Write-Info "Daemon juz dziala na porcie $DaemonPort"
-} else {
+}
+else {
     # Ustaw port przez zmienna srodowiskowa
     $env:ZEROCLAW_DAEMON_PORT = $DaemonPort
     
@@ -377,10 +388,12 @@ if ($runningServices['Daemon']) {
         
         if (Wait-ForPort $DaemonPort -TimeoutSec 45) {
             Write-Success "Daemon gotowy na porcie $DaemonPort"
-        } else {
+        }
+        else {
             Write-Warn "Daemon moze nie byc gotowy (timeout)"
         }
-    } catch {
+    }
+    catch {
         Write-Err "Nie mozna uruchomic Daemon: $_"
     }
 }
@@ -393,9 +406,11 @@ if ($runningServices['Memory']) {
     $mInfo = $runningServices['Memory']
     Write-Info "Memory Service juz dziala na porcie $($mInfo.Port) ($($mInfo.Type))"
     $MemoryPort = $mInfo.Port
-} elseif (Test-Port $MemoryPort) {
+}
+elseif (Test-Port $MemoryPort) {
     Write-Info "Memory Service juz dziala na porcie $MemoryPort"
-} else {
+}
+else {
     $memoryDist = Join-Path $memoryPath "dist"
     if (-not (Test-Path $memoryDist)) {
         Write-Info "Buduje Memory Service..."
@@ -421,10 +436,12 @@ if ($runningServices['Memory']) {
         
         if (Test-Port $MemoryPort) {
             Write-Success "Memory Service gotowy na porcie $MemoryPort"
-        } else {
+        }
+        else {
             Write-Warn "Memory Service moze nie byc gotowy"
         }
-    } catch {
+    }
+    catch {
         Write-Warn "Nie mozna uruchomic Memory Service: $_"
     }
 }
@@ -446,7 +463,8 @@ try {
     $process = [System.Diagnostics.Process]::Start($psi)
     Write-Info "Router uruchomiony (PID: $($process.Id))"
     Start-Sleep -Seconds 2
-} catch {
+}
+catch {
     Write-Warn "Nie mozna uruchomic Router: $_"
 }
 
@@ -459,7 +477,8 @@ Write-Step "Krok 4/7: Health checks"
 Write-Info "Sprawdzam Docker..."
 if ($dockerOk) {
     Write-Success "Docker odpowiada"
-} else {
+}
+else {
     Write-Warn "Docker nie odpowiada"
 }
 
@@ -482,7 +501,8 @@ if (-not (Test-Port $DaemonPort)) {
 if (Test-Port $actualDaemonPort) {
     Write-Success "Daemon odpowiada na porcie $actualDaemonPort"
     $DaemonPort = $actualDaemonPort
-} else {
+}
+else {
     Write-Err "Daemon nie odpowiada"
 }
 
@@ -505,7 +525,8 @@ if (-not (Test-Port $MemoryPort)) {
 if (Test-Port $actualMemoryPort) {
     Write-Success "Memory Service odpowiada na porcie $actualMemoryPort"
     $MemoryPort = $actualMemoryPort
-} else {
+}
+else {
     Write-Warn "Memory Service nie odpowiada (moze dzialac w Dockerze)"
 }
 
@@ -518,10 +539,12 @@ try {
     
     if ($doctorOutput -match "OK|passed|ready|success" -or $LASTEXITCODE -eq 0) {
         Write-Success "Router health check passed"
-    } else {
+    }
+    else {
         Write-Warn "Router issues detected"
     }
-} catch {
+}
+catch {
     Write-Warn "Router health check failed: $_"
 }
 
@@ -529,7 +552,8 @@ try {
 Write-Info "Sprawdzam Signal Pipeline..."
 if (Test-Path (Join-Path $PSScriptRoot ".signals")) {
     Write-Success "Signal pipeline gotowy"
-} else {
+}
+else {
     Write-Err "Signal pipeline niedostepny"
 }
 
@@ -541,23 +565,24 @@ Write-Step "Krok 5/7: Test sygnalu"
 # Poprawny format sygnalu zgodny z daemon
 $testSignal = @{
     signal_type = "ping"
-    id = [Guid]::NewGuid().ToString()
-    payload = @{ test = $true; timestamp = (Get-Date -Format "o") }
-    created_at = (Get-Date -Format "yyyy-MM-ddTHH:mm:ss.fffZ")
-    source = "bootstrap-script"
+    id          = [Guid]::NewGuid().ToString()
+    payload     = @{ test = $true; timestamp = (Get-Date -Format "o") }
+    created_at  = (Get-Date -Format "yyyy-MM-ddTHH:mm:ss.fffZ")
+    source      = "bootstrap-script"
 } | ConvertTo-Json -Compress
 
-$signalPath = Join-Path $PSScriptRoot ".signals\bootstrap_test.sig"
+$signalPath = Join-Path $PSScriptRoot ".signals\bootstrap_test.ping.init.sig"
 # Uzyj System.IO.File bez BOM (PowerShell 5.1 kompatybilne)
 [System.IO.File]::WriteAllText($signalPath, $testSignal, [System.Text.UTF8Encoding]::new($false))
-Write-Success "Wyslano testowy signal: bootstrap_test.sig"
+Write-Success "Wyslano testowy signal: bootstrap_test.ping.init.sig"
 
 # Czekaj na odpowiedz
 Start-Sleep -Seconds 3
 $donePath = Join-Path $PSScriptRoot ".signals\bootstrap_test.done"
 if (Test-Path $donePath) {
     Write-Success "Signal przetworzony: bootstrap_test.done"
-} else {
+}
+else {
     Write-Info "Oczekiwanie na przetworzenie sygnalu przez daemon..."
 }
 
@@ -568,16 +593,16 @@ Write-Step "Krok 6/7: Zapisz konfiguracje"
 
 $configFile = Join-Path $PSScriptRoot ".antigravity-config.json"
 $config = @{
-    lastRun = (Get-Date -Format "o")
-    ports = @{
+    lastRun  = (Get-Date -Format "o")
+    ports    = @{
         daemon = $DaemonPort
         memory = $MemoryPort
         router = $RouterPort
     }
-    paths = @{
+    paths    = @{
         antigravity = $AntigravityPath
-        signals = $signalsLink
-        workspace = $PSScriptRoot
+        signals     = $signalsLink
+        workspace   = $PSScriptRoot
     }
     services = $runningServices
 } | ConvertTo-Json -Depth 3
@@ -606,24 +631,25 @@ Write-Host "  - .antigravity-config.json (stan uslug)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Status serwerow:" -ForegroundColor White
 
-$dockerStatus = if($dockerOk){"[OK]"}else{"[--]"}
-$daemonStatus = if(Test-Port $DaemonPort){"[OK]"}else{"[--]"}
-$memoryStatus = if(Test-Port $MemoryPort){"[OK]"}else{"[--]"}
+$dockerStatus = if ($dockerOk) { "[OK]" }else { "[--]" }
+$daemonStatus = if (Test-Port $DaemonPort) { "[OK]" }else { "[--]" }
+$memoryStatus = if (Test-Port $MemoryPort) { "[OK]" }else { "[--]" }
 
-Write-Host "  - Docker:      $dockerStatus" -ForegroundColor $(if($dockerOk){"Green"}else{"Yellow"})
-Write-Host "  - Daemon:      $daemonStatus (port $DaemonPort)" -ForegroundColor $(if(Test-Port $DaemonPort){"Green"}else{"Red"})
-Write-Host "  - Memory:      $memoryStatus (port $MemoryPort)" -ForegroundColor $(if(Test-Port $MemoryPort){"Green"}else{"Yellow"})
+Write-Host "  - Docker:      $dockerStatus" -ForegroundColor $(if ($dockerOk) { "Green" }else { "Yellow" })
+Write-Host "  - Daemon:      $daemonStatus (port $DaemonPort)" -ForegroundColor $(if (Test-Port $DaemonPort) { "Green" }else { "Red" })
+Write-Host "  - Memory:      $memoryStatus (port $MemoryPort)" -ForegroundColor $(if (Test-Port $MemoryPort) { "Green" }else { "Yellow" })
 Write-Host "  - Router:      [OK]" -ForegroundColor Green
 Write-Host ""
 Write-Host "Nastepne kroki:" -ForegroundColor White
 Write-Host "  1. Otworz workspace w OpenCode" -ForegroundColor Cyan
 Write-Host "  2. Testuj signal:" -ForegroundColor Cyan
-Write-Host '     @{signal_type="ping";id=[Guid]::NewGuid().ToString();created_at=(Get-Date -Format "o");source="test"} | ConvertTo-Json > .signals/test.sig' -ForegroundColor DarkCyan
+Write-Host '     @{signal_type="ping";id="test_ping";created_at=(Get-Date -Format "o");source="test"} | ConvertTo-Json > .signals/test_ping.ping.init.sig' -ForegroundColor DarkCyan
 Write-Host "  3. Monitoruj: Get-Content .signals\*.done -Wait" -ForegroundColor Cyan
 Write-Host ""
 
 if ((Test-Port $DaemonPort) -and $dockerOk) {
     Write-Success "System gotowy do pracy!"
-} else {
+}
+else {
     Write-Warn "Niektore komponenty niedostepne - sprawdz logi"
 }

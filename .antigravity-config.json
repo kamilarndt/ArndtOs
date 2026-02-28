@@ -5,12 +5,16 @@
                   "workspace":  "D:\\_WorkSpaces\\ArndtOs"
               },
     "ports":  {
-                  "daemon":  18765,
+                  "daemon":  8081,
                   "memory":  3002,
-                  "router":  18767
+                  "router":  8000
               },
-    "lastRun":  "2026-02-27T16:47:23.0890174+01:00",
+    "lastRun":  "2026-02-28T09:13:39.3639397+01:00",
     "services":  {
+                     "Daemon":  {
+                                    "Type":  "docker",
+                                    "Port":  8081
+                                },
                      "Memory":  {
                                     "Type":  "docker",
                                     "Port":  3002

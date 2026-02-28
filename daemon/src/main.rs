@@ -4,6 +4,7 @@ mod jwt_auth;
 mod rate_limiter;
 mod metrics;
 mod telegram;
+mod chat;
 
 #[tokio::main]
 async fn main() {

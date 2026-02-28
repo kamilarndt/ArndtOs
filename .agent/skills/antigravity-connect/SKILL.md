@@ -34,8 +34,8 @@ python -m src.cli.doctor
 
 ## 3. Communication Protocol
 To request a task execution (Orchestration):
-1. Generate a unique ID (UUID or timestamp).
-2. Create a `.sig` file in `d:/_WorkSpaces/AntiGravity-System/.signals/`:
+1. Generate a unique ID (e.g., `TASK_ID`).
+2. Create a `.init.sig` file named after your ID and signal type (e.g., `TASK_ID.start_task.init.sig`) in `d:/_WorkSpaces/AntiGravity-System/.signals/`:
 ```json
 {
     "id": "TASK_ID",
@@ -47,9 +47,7 @@ To request a task execution (Orchestration):
     }
 }
 ```
-3. Monitor for `TASK_ID.done` or `TASK_ID.failed`.
-
-## 4. MCP Servers
+3. Monitor for `TASK_ID.done` or `TASK_ID.failed` in the signals directory to confirm execution.
 Register these globally in your agent config to keep memory across chats:
 - **LTM:** `d:/_WorkSpaces/AntiGravity-System/memory`
 - **Docker:** `managed by daemon`
