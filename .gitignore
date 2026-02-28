@@ -1,0 +1,20 @@
+# ZeroClaw sensitive files
+.env
+.secret_key
+*.log
+audit.log
+state/
+zeroclaw_data/memory.db
+zeroclaw_data/memories/
+schema*.json
+
+# VS Code / Workspace
+.vscode/
+*.code-workspace
+
+# OS / Python / Generic
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+/tmp/
