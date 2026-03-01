@@ -1,0 +1,1 @@
+{"version":3,"file":"pruning.d.ts","sourceRoot":"","sources":["pruning.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,gBAAgB,CAAC;AAEzC,qBAAa,cAAc;IACvB,OAAO,CAAC,SAAS,CAAS;gBAEd,SAAS,GAAE,MAAa;IAIpC;;;OAGG;IACH,OAAO,CAAC,cAAc;IAIT,KAAK,CAAC,QAAQ,EAAE,OAAO,EAAE,GAAG,OAAO,CAAC,OAAO,EAAE,CAAC;CA8B9D"}
