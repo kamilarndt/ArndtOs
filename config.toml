@@ -1,8 +1,7 @@
-api_key = "${PROVIDER_API_KEY}"
+api_key = "enc2:b93229cd2212706d093cc4b919b94339fb40a0eaa2b113d5405d66bc2c6d6d59401e01247cd38afd38495b031a490b0455b15c6eb98ea1800ab522051513b386d1b43db81e65df66bfb1d739bb"
 api_url = "https://api.z.ai/api/coding/paas/v4"
-
-default_provider = "zai"
-default_model = "zai/glm-4.7"
+default_provider = "custom:https://api.z.ai/api/coding/paas/v4"
+default_model = "glm-4.7"
 default_temperature = 0.7
 model_routes = []
 embedding_routes = []
@@ -29,12 +28,19 @@ allowed_commands = [
     "grep",
     "find",
     "echo",
+    "claude",
+    "claude-code",
+    "npm",
+    "node",
+    "which",
+    "command",
 ]
 forbidden_paths = [
     "/etc",
     "/root",
     "/var",
-    "/usr",
+    "/usr/share",
+    "/usr/local/include",
     "/bin",
 ]
 max_actions_per_hour = 50
@@ -116,14 +122,14 @@ max_tasks = 64
 max_concurrent = 4
 
 [agent]
-compact_context = false
-max_tool_iterations = 10
+compact_context = true
+max_tool_iterations = 50
 max_history_messages = 50
 parallel_tools = false
 tool_dispatcher = "auto"
 
 [skills]
-open_skills_enabled = false
+open_skills_enabled = true
 prompt_injection_mode = "full"
 
 [query_classification]
@@ -131,7 +137,7 @@ enabled = false
 rules = []
 
 [heartbeat]
-enabled = false
+enabled = true
 interval_minutes = 30
 
 [cron]
@@ -143,7 +149,7 @@ cli = true
 message_timeout_secs = 300
 
 [channels_config.telegram]
-bot_token = "${TELEGRAM_BOT_TOKEN}"
+bot_token = "8548880154:AAG4MTXi7Mc7jDHdse9_DiBGVAdUI44wETM"
 allowed_users = ["6776474378"]
 stream_mode = "off"
 draft_update_interval_ms = 1000
@@ -157,7 +163,7 @@ hygiene_enabled = true
 archive_after_days = 7
 purge_after_days = 30
 conversation_retention_days = 30
-embedding_provider = "none"
+embedding_provider = "custom:https://api.z.ai/api/coding/paas/v4"
 embedding_model = "text-embedding-3-small"
 embedding_dimensions = 1536
 vector_weight = 0.7
@@ -184,13 +190,11 @@ table = "memories"
 provider = "none"
 
 [gateway]
+enabled = true
+host = "127.0.0.1"
 port = 42617
-host = "0.0.0.0"
-require_pairing = true
-allow_public_bind = true
-paired_tokens = ["8e98e8c20569ff833c2b138fe57226273582b3d6f6443241fb08854e6ddf42ad"]
-pair_rate_limit_per_minute = 10
-webhook_rate_limit_per_minute = 60
+pairing_code = "AG-SECURE-TOKEN-9921"
+allow_public_bind = false
 trust_forwarded_headers = false
 rate_limit_max_keys = 10000
 idempotency_ttl_secs = 300
@@ -204,7 +208,7 @@ entity_id = "default"
 encrypt = true
 
 [browser]
-enabled = false
+enabled = true
 allowed_domains = []
 backend = "agent_browser"
 native_headless = true
@@ -217,7 +221,7 @@ allow_remote_endpoint = false
 window_allowlist = []
 
 [http_request]
-enabled = false
+enabled = true
 allowed_domains = []
 max_response_size = 1000000
 timeout_secs = 30
@@ -228,14 +232,14 @@ max_image_size_mb = 5
 allow_remote_fetch = false
 
 [web_fetch]
-enabled = false
+enabled = true
 allowed_domains = ["*"]
 blocked_domains = []
 max_response_size = 500000
 timeout_secs = 30
 
 [web_search]
-enabled = false
+enabled = true
 provider = "duckduckgo"
 max_results = 5
 timeout_secs = 15
@@ -256,9 +260,9 @@ monthly_limit_usd = 100.0
 warn_at_percent = 80
 allow_override = false
 
-[cost.prices."openai/gpt-4o"]
-input = 5.0
-output = 15.0
+[cost.prices."anthropic/claude-3-haiku"]
+input = 0.25
+output = 1.25
 
 [cost.prices."anthropic/claude-3.5-sonnet"]
 input = 3.0
@@ -268,29 +272,29 @@ output = 15.0
 input = 1.25
 output = 5.0
 
-[cost.prices."google/gemini-2.0-flash"]
-input = 0.1
-output = 0.4
-
 [cost.prices."anthropic/claude-sonnet-4-20250514"]
 input = 3.0
 output = 15.0
-
-[cost.prices."anthropic/claude-opus-4-20250514"]
-input = 15.0
-output = 75.0
 
 [cost.prices."openai/gpt-4o-mini"]
 input = 0.15
 output = 0.6
 
+[cost.prices."anthropic/claude-opus-4-20250514"]
+input = 15.0
+output = 75.0
+
 [cost.prices."openai/o1-preview"]
 input = 15.0
 output = 60.0
 
-[cost.prices."anthropic/claude-3-haiku"]
-input = 0.25
-output = 1.25
+[cost.prices."google/gemini-2.0-flash"]
+input = 0.1
+output = 0.4
+
+[cost.prices."openai/gpt-4o"]
+input = 5.0
+output = 15.0
 
 [peripherals]
 enabled = false
@@ -315,3 +319,22 @@ enabled = false
 api_url = "https://api.groq.com/openai/v1/audio/transcriptions"
 model = "whisper-large-v3-turbo"
 max_duration_secs = 120
+
+[security]
+workspace_only = true
+workspace_root = "./workspace"
+forbidden_paths = [
+    "/etc", 
+    "/var", 
+    "/root", 
+    "C:\\Windows", 
+    "../",           
+    ".env",          
+    ".secret_key"    
+]
+allow_symlinks = false
+
+[tools.antygravity]
+enabled = true
+type = "websocket_bridge"
+description = "Antygravity local worker. Handles safe file operations inside the workspace."

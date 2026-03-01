@@ -12,9 +12,16 @@ schema*.json
 .vscode/
 *.code-workspace
 
+# Node.js
+node_modules/
+dist/
+
 # OS / Python / Generic
 __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
 /tmp/
+
+# Local config
+doc/
