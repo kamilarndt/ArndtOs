@@ -1,14 +1,42 @@
 api_key = "enc2:b93229cd2212706d093cc4b919b94339fb40a0eaa2b113d5405d66bc2c6d6d59401e01247cd38afd38495b031a490b0455b15c6eb98ea1800ab522051513b386d1b43db81e65df66bfb1d739bb"
 api_url = "https://api.z.ai/api/coding/paas/v4"
-default_provider = "custom:https://api.z.ai/api/coding/paas/v4"
-default_model = "glm-4.7"
+default_provider = "router"
+default_model = "claude-3-7-sonnet-20250219"
 default_temperature = 0.7
-model_routes = []
+
+[[model_routes]]
+intent = ["coding", "architecture", "complex_reasoning"]
+hint = "High level logic and architecture"
+provider = "anthropic"
+model = "claude-3-7-sonnet-20250219"
+
+[[model_routes]]
+intent = ["summarization", "log_analysis", "formatting"]
+hint = "Summarization and formatting"
+provider = "anthropic"
+model = "claude-3-5-haiku-20241022"
+
+[[model_routes]]
+intent = ["file_operations", "cron_setup", "system_status"]
+hint = "Local file and system operations"
+provider = "ollama"
+model = "qwen2.5-coder:7b"
+
 embedding_routes = []
 
 [model_providers.zai]
 name = "zai"
 base_url = "https://api.z.ai/api/coding/paas/v4"
+requires_openai_auth = false
+
+[model_providers.anthropic]
+name = "anthropic"
+base_url = "https://api.z.ai/api/anthropic"
+requires_openai_auth = false
+
+[model_providers.ollama]
+name = "ollama"
+base_url = "http://host.docker.internal:11434/v1"
 requires_openai_auth = false
 
 [observability]
@@ -97,7 +125,7 @@ kind = "native"
 
 [runtime.docker]
 image = "alpine:3.20"
-network = "none"
+network = "bridge"
 memory_limit_mb = 512
 cpu_limit = 1.0
 read_only_rootfs = true
@@ -191,7 +219,7 @@ provider = "none"
 
 [gateway]
 enabled = true
-host = "127.0.0.1"
+host = "0.0.0.0"
 port = 42617
 pairing_code = "AG-SECURE-TOKEN-9921"
 allow_public_bind = false
@@ -222,7 +250,7 @@ window_allowlist = []
 
 [http_request]
 enabled = true
-allowed_domains = []
+allowed_domains = ["*"]
 max_response_size = 1000000
 timeout_secs = 30
 
@@ -322,7 +350,7 @@ max_duration_secs = 120
 
 [security]
 workspace_only = true
-workspace_root = "./workspace"
+workspace_root = "/workspace_data"
 forbidden_paths = [
     "/etc", 
     "/var", 
