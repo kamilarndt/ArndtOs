@@ -1,0 +1,21 @@
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "0ebd978f2bd44798a27bfb6f7fd01489.K1cuWqx1vWYfclJU",
+    "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+    "API_TIMEOUT_MS": "3000000",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7"
+  },
+  "extraKnownMarketplaces": {
+    "zai-coding-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "zai-org/zai-coding-plugins"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "glm-plan-usage@zai-coding-plugins": true
+  }
+}

@@ -1,0 +1,71 @@
+# ZeroClaw Config - Z.ai as Default Provider
+# https://github.com/zeroclaw-labs/zeroclaw/blob/main/docs/config-reference.md
+
+# =============================================================================
+# GLOBAL SETTINGS
+# =============================================================================
+api_key = "***MASKED***"  # global fallback (zalecane: użyj w providerze)
+
+# =============================================================================
+# DEFAULT PROVIDER & MODEL
+# =============================================================================
+default_provider = "zai"      # KLUCZOWA ZMIANA - używa Z.ai zamiast OpenAI
+default_model = "glm-4.7"      # domyślny model GLM-4.7
+default_temperature = 0.7      # temperatura generacji
+model_routes = []              # routing modeli (pusty = domyślne)
+embedding_routes = []          # routing embeddingów (pusty = domyślne)
+
+# =============================================================================
+# MODEL PROVIDERS
+# =============================================================================
+[model_providers.zai]
+name = "Z.ai GLM"
+base_url = "https://api.z.ai/api/coding/paas/v4"
+api_key = "***MASKED***"       # tu wpisz swój klucz Z.ai (format: id.secret)
+requires_openai_auth = true
+kind = "openai-compatible"     # zalecane dla Z.ai
+
+# =============================================================================
+# HARDWARE
+# =============================================================================
+[hardware]
+enabled = false
+transport = "None"
+baud_rate = 115200
+workspace_datasheets = false
+
+# =============================================================================
+# HOOKS
+# =============================================================================
+[hooks]
+enabled = true
+[hooks.builtin]
+command_logger = false
+
+# =============================================================================
+# TRANSCRIPTION
+# =============================================================================
+[transcription]
+enabled = false
+api_url = "https://api.groq.com/openai/v1/audio/transcriptions"
+model = "whisper-large-v3-turbo"
+max_duration_secs = 120
+
+# =============================================================================
+# AUTONOMY & SECURITY (bezpieczne domyślne)
+# =============================================================================
+[autonomy]
+max_iterations = 10
+max_depth = 5
+timeout_secs = 300
+
+[security]
+mode = "supervised"
+workspace_only = true
+
+# =============================================================================
+# MEMORY (opcjonalnie: zmień embedding_provider na "zai" jeśli embedding słaby)
+# =============================================================================
+[memory]
+enabled = true
+# embedding_provider = "zai"  # odkomentuj jeśli embedding z innych providerów działa słabo

@@ -1,0 +1,1 @@
+{"version":3,"file":"evolving.d.ts","sourceRoot":"","sources":["evolving.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,SAAS,CAAC;AAEzC,qBAAa,kBAAkB;IAC3B,OAAO,CAAC,KAAK,CAAiB;IAG9B,OAAO,CAAC,SAAS,CAAkC;gBAEvC,KAAK,EAAE,cAAc;IAI1B,WAAW,CAAC,MAAM,EAAE,MAAM;IAKpB,MAAM,CAAC,cAAc,GAAE,MAAU,EAAE,cAAc,GAAE,MAAU;;;CAiB7E"}
