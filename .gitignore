@@ -25,3 +25,10 @@ Thumbs.db
 
 # Local config
 doc/
+
+# Daemon state
+daemon_state.json
+workspace/daemon_state.json
+
+# Temporary research files
+*_find.txt

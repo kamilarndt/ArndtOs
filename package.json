@@ -12,6 +12,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
+    "@types/chokidar": "^1.7.5",
     "@types/cron": "^2.0.1",
     "@types/node": "^25.3.3",
     "@types/node-fetch": "^2.6.13",
@@ -20,6 +21,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "better-sqlite3": "^12.6.2",
     "chokidar": "^5.0.0",
     "cron": "^4.4.0",
