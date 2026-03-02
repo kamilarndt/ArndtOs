@@ -39,6 +39,7 @@ COPY --from=official /usr/local/bin/zeroclaw /usr/bin/zeroclaw
 # Ustawiamy uprawnienia i środowisko
 ENV ZEROCLAW_WORKSPACE=/workspace
 ENV HOME=/zeroclaw-data
+RUN mkdir -p /zeroclaw-data/.claude && chmod 777 /zeroclaw-data
 WORKDIR /workspace
 
 EXPOSE 8080
