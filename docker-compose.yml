@@ -13,8 +13,8 @@ services:
     env_file:
       - .env
     environment:
-      - ZEROCLAW_CONFIG_PATH=/workspace/config.toml
-      - ZEROCLAW_WORKSPACE=/workspace
+      - ZEROCLAW_CONFIG_PATH=/zeroclaw-data/workspace/config.toml
+      - ZEROCLAW_WORKSPACE=/zeroclaw-data
       - ZEROCLAW_CHANNELS=telegram
       - PROVIDER_API_KEY=${PROVIDER_API_KEY}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
@@ -26,6 +26,6 @@ services:
       - COLUMNS=120
       - LINES=40
     volumes:
-      # Mapujemy cały folder ArndtOs do /workspace wewnątrz kontenera
-      - .:/workspace
+      # Mapujemy cały folder projektu do folderu 'workspace' bota
+      - .:/zeroclaw-data/workspace
       - ./claude_settings.json:/zeroclaw-data/.claude/settings.json
