@@ -1,0 +1,36 @@
+{
+  "modules": [
+    {
+      "id": "status",
+      "path": "/status",
+      "name": "Status Systemu",
+      "icon": "Activity",
+      "enabled": true,
+      "description": "Status połączenia Gateway i statystyki systemowe"
+    },
+    {
+      "id": "dashboard",
+      "path": "/",
+      "name": "Dashboard Główny",
+      "icon": "LayoutDashboard",
+      "enabled": true,
+      "description": "Dashboard analityczny z wykresami zużycia zasobów"
+    },
+    {
+      "id": "console",
+      "path": "/console",
+      "name": "Konsola Agenta",
+      "icon": "Terminal",
+      "enabled": true,
+      "description": "Interaktywna konsola do rozmów z agentem"
+    },
+    {
+      "id": "settings",
+      "path": "/settings",
+      "name": "Ustawienia",
+      "icon": "Settings",
+      "enabled": false,
+      "description": "Ustawienia systemu (w przygotowaniu)"
+    }
+  ]
+}

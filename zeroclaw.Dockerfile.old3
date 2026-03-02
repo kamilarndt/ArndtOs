@@ -1,0 +1,34 @@
+﻿FROM ghcr.io/zeroclaw-labs/zeroclaw:v0.1.7 AS zeroclaw-base
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Node.js, npm, git and other requirements on Ubuntu 24.04 (provides GLIBC 2.39)
+RUN apt-get update && \
+    apt-get install -y curl ca-certificates build-essential git xdg-utils && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Claude Code globally via npm
+RUN npm install -g @anthropic-ai/claude-code
+
+# Copy zeroclaw binary and setup environment structure
+COPY --from=zeroclaw-base /usr/local/bin/zeroclaw /usr/local/bin/zeroclaw
+COPY --from=zeroclaw-base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+# Setup ZeroClaw environment
+ENV ZEROCLAW_WORKSPACE=/zeroclaw-data/workspace \
+    HOME=/zeroclaw-data \
+    ZEROCLAW_GATEWAY_PORT=42617 \
+    SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
+# Create required directories
+RUN mkdir -p /zeroclaw-data/workspace /zeroclaw-data/.claude
+
+WORKDIR /zeroclaw-data
+
+ENTRYPOINT ["zeroclaw"]
+CMD ["daemon"]

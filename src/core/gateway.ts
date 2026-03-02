@@ -1,27 +1,27 @@
 import WebSocket from 'ws';
 import { WorkspaceSandbox } from './sandbox';
 import { IPCInboundFrame, IPCOutboundFrame } from './ipc';
+import { Tool } from './plugin';
 
 export class GatewayClient {
     private endpoint: string;
     private pairingCode: string;
     private ws: WebSocket | null = null;
     private sandbox: WorkspaceSandbox;
+    private tools: Tool[];
 
-    // We could inject actual tools here to dispatch
-    // private tools: Tool[];
-
-    constructor(endpoint: string, pairingCode: string, sandbox: WorkspaceSandbox) {
+    constructor(endpoint: string, pairingCode: string, sandbox: WorkspaceSandbox, tools: Tool[] = []) {
         this.endpoint = endpoint;
         this.pairingCode = pairingCode;
         this.sandbox = sandbox;
+        this.tools = tools;
     }
 
     public connect() {
         console.log(`[Gateway]: Connecting to ${this.endpoint}...`);
         this.ws = new WebSocket(this.endpoint, {
             headers: {
-                'Authorization': `Bearer ${this.pairingCode}` // Or 'X-Pairing-Code' depending on ZeroClaw's impl
+                'Authorization': `Bearer ${this.pairingCode}`
             }
         });
 
@@ -53,34 +53,47 @@ export class GatewayClient {
 
             // 2. Command Dispatching
             if (frame.type === 'command' && frame.action === 'execute_task' && frame.payload) {
-                console.log(`[Gateway]: Received Task ${frame.id} -> Tool: ${frame.payload.tool}`);
+                const toolName = frame.payload.tool;
+                console.log(`[Gateway]: Received Task ${frame.id} -> Tool: ${toolName}`);
 
-                // Validate paths using our Defense-in-Depth Sandbox
-                if (frame.payload.target_path) {
-                    try {
+                const tool = this.tools.find(t => t.name === toolName);
+                if (!tool) {
+                    console.error(`[Gateway]: Tool ${toolName} not found!`);
+                    this.send({
+                        id: frame.id,
+                        source: 'antigravity',
+                        type: 'response',
+                        payload: { status: 'error', reason: `Tool ${toolName} not found` }
+                    });
+                    return;
+                }
+
+                try {
+                    // Normalize parameters and handle optional target_path
+                    const args = { ...frame.payload.parameters };
+                    if (frame.payload.target_path) {
                         const safePath = this.sandbox.getSafePath(frame.payload.target_path);
-                        console.log(`[Sandbox]: Path Normalized securely -> ${safePath}`);
-                        // Here we would execute the tool passing the `safePath` instead of raw input.
-                        // Example:
-                        // const result = await this.tools.find(t => t.name === frame.payload.tool).execute({ ...frame.payload.parameters, path: safePath });
-
-                        this.send({
-                            id: frame.id,
-                            source: 'antigravity',
-                            type: 'response',
-                            payload: { status: 'success', detail: `Simulated execution on ${safePath}` }
-                        });
-
-                    } catch (secErr: any) {
-                        console.error(`[Sandbox Alert]: Blocked malicious path traversal: ${secErr.message}`);
-                        this.send({
-                            id: frame.id,
-                            source: 'antigravity',
-                            type: 'response',
-                            payload: { status: 'error', reason: secErr.message }
-                        });
-                        return;
+                        args.target_path = safePath;
                     }
+
+                    console.log(`[Gateway]: Executing ${toolName}...`);
+                    const result = await tool.execute(args);
+
+                    this.send({
+                        id: frame.id,
+                        source: 'antigravity',
+                        type: 'response',
+                        payload: { status: 'success', detail: result }
+                    });
+
+                } catch (execErr: any) {
+                    console.error(`[Gateway]: Execution failed: ${execErr.message}`);
+                    this.send({
+                        id: frame.id,
+                        source: 'antigravity',
+                        type: 'response',
+                        payload: { status: 'error', reason: execErr.message }
+                    });
                 }
             }
         } catch (e) {

@@ -32,3 +32,13 @@ workspace/daemon_state.json
 
 # Temporary research files
 *_find.txt
+
+# ArndtOs / ZeroClaw specific exclusions
+memory/
+temp-vite-app/
+workspace/temp-vite-app/
+workspace/workspace/
+integrations_info.json
+workspace/memory/
+workspace/web-ui/node_modules/
+workspace/workspace/node_modules/
