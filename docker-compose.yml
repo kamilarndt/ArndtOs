@@ -13,7 +13,7 @@ services:
     env_file:
       - .env
     environment:
-      - ZEROCLAW_CONFIG_PATH=/zeroclaw-data/workspace/config.toml
+      - ZEROCLAW_CONFIG_PATH=/zeroclaw-data/config.toml
       - ZEROCLAW_WORKSPACE=/zeroclaw-data
       - ZEROCLAW_CHANNELS=telegram
       - PROVIDER_API_KEY=${PROVIDER_API_KEY}
@@ -26,6 +26,8 @@ services:
       - COLUMNS=120
       - LINES=40
     volumes:
+      # Mapujemy konkretny plik konfiguracyjny do katalogu danych bota
+      - ./config.toml:/zeroclaw-data/config.toml
       # Mapujemy cały folder projektu do folderu 'workspace' bota
       - .:/zeroclaw-data/workspace
       - ./claude_settings.json:/zeroclaw-data/.claude/settings.json
