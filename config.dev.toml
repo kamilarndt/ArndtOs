@@ -1,0 +1,115 @@
+default_provider = "zai"
+default_model = "glm-4.7"
+default_temperature = 0.7
+
+[model_providers.zai]
+name = "zai"
+base_url = "https://api.z.ai/api/coding/paas/v4"
+api_key = "${env:PROVIDER_API_KEY}"
+requires_openai_auth = true
+kind = "openai-compatible"
+timeout_ms = 30000
+
+[model_providers.openrouter]
+name = "OpenRouter"
+base_url = "https://openrouter.ai/api/v1"
+api_key = "${env:OPENROUTER_API_KEY}"
+requires_openai_auth = true
+
+[model_providers.nvidia]
+name = "nvidia"
+base_url = "https://integrate.api.nvidia.com/v1"
+api_key = "${env:NVIDIA_API_KEY}"
+requires_openai_auth = true
+
+[model_providers.mistral]
+name = "mistral"
+base_url = "https://api.mistral.ai/v1"
+api_key = "${env:MISTRAL_API_KEY}"
+requires_openai_auth = true
+
+[autonomy]
+level = "full"
+workspace_only = true
+allowed_commands = [
+    "ls", "cat", "pwd", "git", "grep", "find", "echo", "claude", "claude-code", "npm", "npx", "node", "sh", "bash", "mkdir", "tsc", "which", "command", "cargo", "rustup", "docker", "make", "qemu", "ninja", "cmake", "curl", "wget", "playwright"
+]
+forbidden_paths = [
+    "/etc", "/var", "/root", "C:\\Windows", "../", ".env", ".secret_key",
+    "/proc", "/sys", "~/.ssh", "~/.gnupg", "~/.aws", "~/.docker", "~/.kube"
+]
+max_actions_per_hour = 100
+max_cost_per_day_cents = 1000
+block_high_risk_commands = false
+auto_approve = ["file_read", "memory_recall", "shell_execute"]
+
+[runtime]
+kind = "docker"
+mount_workspace = true
+# Intentionally omitting network="none" for dev to allow network access like npm install
+
+[agent]
+max_history_messages = 35
+compact_context = true
+max_tool_iterations = 25
+
+[skills]
+open_skills_enabled = true
+
+[channels_config]
+cli = true
+message_timeout_secs = 3600
+
+[channels_config.telegram]
+enabled = false # Telegram should be handled by the production bot
+
+[[model_routes]]
+intent = ["coding", "refactor", "debug"]
+hint = "Z.AI primary"
+provider = "zai"
+model = "glm-4.7"
+
+[[model_routes]]
+intent = ["coding", "refactor", "debug"]
+hint = "Fallback for Z.AI block"
+provider = "openrouter"
+model = "google/gemini-2.0-flash-001"
+
+[[model_routes]]
+intent = ["architecture", "planning", "complex_logic"]
+hint = "Z.AI high-level"
+provider = "zai"
+model = "glm-5"
+
+[[model_routes]]
+intent = ["architecture", "planning", "complex_logic"]
+hint = "Fallback for architecture"
+provider = "openrouter"
+model = "anthropic/claude-3.5-sonnet"
+
+[[model_routes]]
+intent = ["summarization", "formatting", "quick_task"]
+hint = "Z.AI quick task"
+provider = "zai"
+model = "glm-4.5-air"
+
+[[model_routes]]
+intent = ["summarization", "formatting", "quick_task"]
+hint = "Fallback for quick tasks"
+provider = "openrouter"
+model = "google/gemini-2.0-flash-001"
+
+provider_retries = 3
+provider_backoff_ms = 1000
+
+[reliability.model_fallbacks]
+"glm-4.7" = ["openrouter/google/gemini-2.0-flash-001"]
+"glm-5" = ["openrouter/anthropic/claude-3.5-sonnet"]
+"glm-4.5-air" = ["openrouter/google/gemini-2.0-flash-001"]
+"zai/glm-4.7" = ["openrouter/google/gemini-2.0-flash-001"]
+"zai/glm-5" = ["openrouter/anthropic/claude-3.5-sonnet"]
+"zai/glm-4.5-air" = ["openrouter/google/gemini-2.0-flash-001"]
+
+[memory]
+backend = "sqlite"
+auto_save = true

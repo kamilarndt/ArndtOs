@@ -12,7 +12,12 @@ export class FileSystemTools {
     }
 
     private isAllowed(targetPath: string): boolean {
-        const resolvedPath = path.resolve(targetPath);
+        let internalPath = targetPath;
+        if (targetPath.startsWith('/workspace_data')) {
+            const relativePart = targetPath.replace('/workspace_data', '');
+            internalPath = path.join(this.allowedRoot, relativePart);
+        }
+        const resolvedPath = path.resolve(this.allowedRoot, internalPath);
         return resolvedPath.startsWith(this.allowedRoot);
     }
 

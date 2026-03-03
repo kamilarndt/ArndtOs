@@ -15,13 +15,17 @@ export class WorkspaceSandbox {
      * @returns The safe, absolute path.
      */
     public getSafePath(targetPath: string): string {
-        // 1. Resolve to an absolute path, basing it off the predefined workspaceRoot.
-        // If targetPath is already absolute (e.g. /etc/passwd), path.resolve gracefully handles it, 
-        // but we will catch it in step 2.
-        const resolvedPath = path.resolve(this.workspaceRoot, targetPath);
+        // 1. Handle /workspace_data prefix for container compatibility
+        let internalPath = targetPath;
+        if (targetPath.startsWith('/workspace_data')) {
+            const relativePart = targetPath.replace('/workspace_data', '');
+            internalPath = path.join(this.workspaceRoot, relativePart);
+        }
 
-        // 2. Security Check (Path Traversal): Ensure the resolved path strictly starts with the workspaceRoot.
-        // For Windows compatibility, we also normalize slashes or rely on path module.
+        // 2. Resolve to an absolute path, basing it off the predefined workspaceRoot.
+        const resolvedPath = path.resolve(this.workspaceRoot, internalPath);
+
+        // 3. Security Check (Path Traversal): Ensure the resolved path strictly starts with the workspaceRoot.
         if (!resolvedPath.startsWith(this.workspaceRoot)) {
             throw new Error(`[Security Sandbox] Access Denied: Path Traversal detected on '${targetPath}'.`);
         }

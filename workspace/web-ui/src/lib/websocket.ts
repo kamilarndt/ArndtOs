@@ -2,6 +2,19 @@ import { useSystemStore } from '../store/systemStore';
 
 type ConnectionState = 'disconnected' | 'connecting' | 'connected';
 
+interface WSMessage {
+  type: string;
+  text?: string;
+  status?: string;
+  metrics?: {
+    cpu?: number;
+    ram?: number;
+    uptime?: string;
+  };
+  message?: string;
+  [key: string]: unknown;
+}
+
 /**
  * WebSocket Client Singleton
  * Manages connection to ZeroClaw Gateway with auto-reconnect
@@ -15,8 +28,7 @@ class WebSocketClient {
   private reconnectBackoffMultiplier = 1.5;
 
   // Gateway configuration
-  private readonly WS_URL = 'ws://127.0.0.1:42617/ws/chat';
-  private readonly WS_PROTOCOLS = ['Bearer', 'AG-SECURE-TOKEN-9921'];
+  private readonly WS_URL = 'ws://127.0.0.1:3001';
 
   /**
    * Initialize WebSocket connection
@@ -33,8 +45,8 @@ class WebSocketClient {
     addLog('Nawiązywanie połączenia z ZeroClaw Gateway...', 'info');
 
     try {
-      // Connect with Bearer token sub-protocol for authentication
-      this.ws = new WebSocket(this.WS_URL, this.WS_PROTOCOLS);
+      // Connect to telemetry server
+      this.ws = new WebSocket(this.WS_URL);
 
       this.setupEventHandlers();
     } catch (error) {
@@ -51,7 +63,7 @@ class WebSocketClient {
   private setupEventHandlers(): void {
     if (!this.ws) return;
 
-    const { setWsStatus, addLog, addChatMessage } = useSystemStore.getState();
+    const { setWsStatus, addLog } = useSystemStore.getState();
 
     // Connection opened
     this.ws.onopen = () => {
@@ -100,9 +112,20 @@ class WebSocketClient {
   /**
    * Handle incoming messages from Gateway
    */
-  private handleMessage(data: any): void {
+  private handleMessage(data: WSMessage | any): void {
     const { addLog, addChatMessage, updateMetrics } = useSystemStore.getState();
 
+    // Handle raw telemetry data format from telemetry.ts
+    if (data.cpu && data.ram && data.timestamp) {
+      updateMetrics({
+        cpu: data.cpu.usage || 0,
+        ram: data.ram.percent || 0,
+        uptime: '0d 0h 0m',
+      });
+      return;
+    }
+
+    // Handle structured messages
     switch (data.type) {
       case 'pong':
         addLog('Otrzymano Pong od Gateway', 'info');
@@ -142,7 +165,7 @@ class WebSocketClient {
   /**
    * Send data to Gateway
    */
-  send(data: any): boolean {
+  send(data: { type: string; [key: string]: unknown }): boolean {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
       console.warn('[WebSocket] Cannot send - not connected');
       const { addLog } = useSystemStore.getState();

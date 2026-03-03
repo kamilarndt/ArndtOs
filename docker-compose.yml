@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   zeroclaw-runtime:
     build:
@@ -10,15 +8,23 @@ services:
     restart: unless-stopped
     ports:
       - "42617:42617"
+      - "3001:3001"
+      - "42618:42618"
     env_file:
       - .env
     environment:
       - ZEROCLAW_CONFIG_PATH=/zeroclaw-data/config.toml
       - ZEROCLAW_WORKSPACE=/zeroclaw-data
       - ZEROCLAW_CHANNELS=telegram
+      - HTTPS_PROXY=${HTTPS_PROXY}
+      - ALL_PROXY=${ALL_PROXY}
+      - NO_PROXY=${NO_PROXY}
       - PROVIDER_API_KEY=${PROVIDER_API_KEY}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - TELEGRAM_ALLOWED_USER=${TELEGRAM_ALLOWED_USER}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
       - OPENAI_API_KEY=${PROVIDER_API_KEY}
       - ZAI_API_KEY=${PROVIDER_API_KEY}
       - API_KEY=${PROVIDER_API_KEY}
@@ -26,8 +32,11 @@ services:
       - COLUMNS=120
       - LINES=40
     volumes:
-      # Mapujemy konkretny plik konfiguracyjny do katalogu danych bota
-      - ./config.toml:/zeroclaw-data/config.toml
+      # Mapujemy konkretny plik konfiguracyjny zależnie od środowiska:
+      # Domyślnie profil bezpiecznego bota produkcyjnego (Telegram):
+      - ./config.telegram.toml:/zeroclaw-data/config.toml
+      # Dla lokalnego CLI (pełne uprawnienia dev), odkomentuj poniższą linię a zakomentuj wyższą:
+      # - ./config.dev.toml:/zeroclaw-data/config.toml
       # Mapujemy cały folder projektu do folderu 'workspace' bota
       - .:/zeroclaw-data/workspace
       - ./claude_settings.json:/zeroclaw-data/.claude/settings.json

@@ -1,8 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { useState, useEffect } from 'react'
+import { Activity, LayoutDashboard, Terminal, Settings } from 'lucide-react'
 import './index.css'
-import { App } from './App'
 import './App.css'
+
+import { wsClient } from './lib/websocket'
+import { StatusModule } from './modules/status'
+import { DashboardModule } from './modules/dashboard'
+import { ConsoleModule } from './modules/console'
 
 type ModuleType = 'status' | 'dashboard' | 'console' | 'settings' | null;
 

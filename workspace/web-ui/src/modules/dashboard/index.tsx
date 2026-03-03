@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useSystemStore } from '@/store/systemStore';
 import { LayoutDashboard, Cpu, HardDrive, Clock, TrendingUp } from 'lucide-react';
@@ -19,7 +18,7 @@ export const DashboardModule = () => {
   const { metrics, metricsHistory } = useSystemStore();
 
   // Prepare chart data
-  const chartData = metricsHistory.map((entry, index) => ({
+  const chartData = metricsHistory.map((entry) => ({
     name: new Date(entry.timestamp).toLocaleTimeString('pl-PL', {
       hour: '2-digit',
       minute: '2-digit',
